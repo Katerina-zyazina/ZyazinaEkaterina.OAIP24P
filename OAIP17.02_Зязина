@@ -1,0 +1,318 @@
+import json
+import os
+import sys
+from datetime import datetime
+
+# === ЗАГРУЗКА И СОХРАНЕНИЕ ===
+def load_data():
+    """Загрузка данных из JSON файла"""
+    filename = 'projects.json'
+    if os.path.exists(filename):
+        try:
+            with open(filename, 'r', encoding='utf-8') as file:
+                return json.load(file)
+        except:
+            return []
+    return []
+
+def save_data(projects):
+    """Сохранение данных в JSON файл"""
+    filename = 'projects.json'
+    try:
+        with open(filename, 'w', encoding='utf-8') as file:
+            json.dump(projects, file, ensure_ascii=False, indent=2)
+    except:
+        print("❌ Ошибка при сохранении файла")
+
+# === ФУНКЦИЯ БЕЗОПАСНОГО ВВОДА ===
+def safe_input(prompt):
+    """Безопасный ввод с обработкой ошибок"""
+    try:
+        return input(prompt).strip()
+    except EOFError:
+        print("\n❌ Ошибка ввода. Завершение программы.")
+        sys.exit(1)
+    except KeyboardInterrupt:
+        print("\n\n👋 Программа завершена пользователем")
+        sys.exit(0)
+
+# === ФУНКЦИИ ДЛЯ ПРОЕКТОВ ===
+def show_projects(projects):
+    """Показать все проекты"""
+    print("\n" + "="*60)
+    print("                  ПРОЕКТЫ")
+    print("="*60)
+    
+    if not projects:
+        print("📁 Нет созданных проектов")
+        return
+    
+    for i, project in enumerate(projects, 1):
+        # Определяем иконку статуса
+        if project['status'] == 'планирование':
+            icon = '📝'
+        elif project['status'] == 'в работе':
+            icon = '🔄'
+        elif project['status'] == 'готов':
+            icon = '✅'
+        else:
+            icon = '📌'
+        
+        print(f"\n{i}. {icon} {project['name']}")
+        print(f"   Статус: {project['status']}")
+        print(f"   Задач: {len(project['tasks'])}")
+        print(f"   Создан: {project['created_date']}")
+
+def create_project(projects):
+    """Создать новый проект"""
+    print("\n" + "="*60)
+    print("              СОЗДАНИЕ ПРОЕКТА")
+    print("="*60)
+    
+    name = safe_input("Введите название проекта: ")
+    
+    if not name:
+        print("❌ Ошибка: название не может быть пустым")
+        return projects
+    
+    print("\nВыберите статус:")
+    print("1. Планирование")
+    print("2. В работе")
+    print("3. Готов")
+    
+    choice = safe_input("Ваш выбор (1-3): ")
+    
+    if choice == "1":
+        status = "планирование"
+    elif choice == "2":
+        status = "в работе"
+    elif choice == "3":
+        status = "готов"
+    else:
+        status = "планирование"
+        print("⚠️ Выбран статус по умолчанию: планирование")
+    
+    # Создаем проект
+    project = {
+        'name': name,
+        'status': status,
+        'created_date': datetime.now().strftime("%d.%m.%Y %H:%M"),
+        'tasks': []
+    }
+    
+    projects.append(project)
+    save_data(projects)
+    print(f"\n✅ Проект '{name}' создан!")
+    
+    return projects
+
+def change_project_status(projects):
+    """Изменить статус проекта"""
+    print("\n" + "="*60)
+    print("           ИЗМЕНЕНИЕ СТАТУСА")
+    print("="*60)
+    
+    if not projects:
+        print("❌ Нет проектов")
+        return projects
+    
+    # Показываем проекты
+    for i, project in enumerate(projects, 1):
+        print(f"{i}. {project['name']} (статус: {project['status']})")
+    
+    try:
+        num = safe_input("\nВыберите номер проекта: ")
+        
+        if not num:
+            print("❌ Введите номер")
+            return projects
+            
+        idx = int(num) - 1
+        
+        if 0 <= idx < len(projects):
+            project = projects[idx]
+            
+            print(f"\nТекущий статус: {project['status']}")
+            print("1. Планирование 📝")
+            print("2. В работе 🔄")
+            print("3. Готов ✅")
+            
+            choice = safe_input("Новый статус (1-3): ")
+            
+            if choice == "1":
+                new_status = "планирование"
+            elif choice == "2":
+                new_status = "в работе"
+            elif choice == "3":
+                new_status = "готов"
+            else:
+                print("❌ Неверный выбор")
+                return projects
+            
+            old = project['status']
+            project['status'] = new_status
+            save_data(projects)
+            print(f"\n✅ Статус изменен: '{old}' → '{new_status}'")
+        else:
+            print("❌ Неверный номер")
+    except ValueError:
+        print("❌ Введите число")
+    
+    return projects
+
+# === ФУНКЦИИ ДЛЯ ЗАДАЧ ===
+def add_task(projects):
+    """Добавить задачу в проект"""
+    print("\n" + "="*60)
+    print("              ДОБАВЛЕНИЕ ЗАДАЧИ")
+    print("="*60)
+    
+    if not projects:
+        print("❌ Нет проектов")
+        return projects
+    
+    # Показываем проекты
+    for i, project in enumerate(projects, 1):
+        print(f"{i}. {project['name']} (задач: {len(project['tasks'])})")
+    
+    try:
+        num = safe_input("\nВыберите проект: ")
+        
+        if not num:
+            print("❌ Введите номер")
+            return projects
+            
+        idx = int(num) - 1
+        
+        if 0 <= idx < len(projects):
+            task_name = safe_input("Введите название задачи: ")
+            
+            if not task_name:
+                print("❌ Название не может быть пустым")
+                return projects
+            
+            task = {
+                'name': task_name,
+                'created_date': datetime.now().strftime("%d.%m.%Y %H:%M"),
+                'completed': False
+            }
+            
+            projects[idx]['tasks'].append(task)
+            save_data(projects)
+            print(f"\n✅ Задача '{task_name}' добавлена в проект '{projects[idx]['name']}'")
+        else:
+            print("❌ Неверный номер")
+    except ValueError:
+        print("❌ Введите число")
+    
+    return projects
+
+def show_tasks(projects):
+    """Показать задачи в проекте"""
+    print("\n" + "="*60)
+    print("              ЗАДАЧИ ПРОЕКТА")
+    print("="*60)
+    
+    if not projects:
+        print("❌ Нет проектов")
+        return
+    
+    # Показываем проекты
+    for i, project in enumerate(projects, 1):
+        print(f"{i}. {project['name']}")
+    
+    try:
+        num = safe_input("\nВыберите проект: ")
+        
+        if not num:
+            print("❌ Введите номер")
+            return
+            
+        idx = int(num) - 1
+        
+        if 0 <= idx < len(projects):
+            project = projects[idx]
+            
+            print(f"\n📁 Проект: {project['name']}")
+            print(f"📊 Статус: {project['status']}")
+            print("-" * 40)
+            
+            if not project['tasks']:
+                print("📭 Нет задач")
+            else:
+                for i, task in enumerate(project['tasks'], 1):
+                    if task['completed']:
+                        status = "✅"
+                    else:
+                        status = "⭕"
+                    print(f"{status} {i}. {task['name']}")
+                    print(f"   Добавлена: {task['created_date']}")
+                    
+                    # Спрашиваем, отметить ли задачу как выполненную
+                    if not task['completed']:
+                        mark = safe_input(f"   Отметить задачу {i} как выполненную? (д/н): ").lower()
+                        if mark in ['д', 'да', 'yes', 'y']:
+                            task['completed'] = True
+                            save_data(projects)
+                            print("   ✅ Задача отмечена как выполненная!")
+        else:
+            print("❌ Неверный номер")
+    except ValueError:
+        print("❌ Введите число")
+
+# === ГЛАВНАЯ ФУНКЦИЯ ===
+def main():
+    """Главная функция программы"""
+    projects = load_data()
+    
+    while True:
+        print("\n" + "="*60)
+        print("           МЕНЕДЖЕР ПРОЕКТОВ И ЗАДАЧ")
+        print("="*60)
+        print("1. 📋 Показать все проекты")
+        print("2. ✨ Создать проект")
+        print("3. ➕ Добавить задачу")
+        print("4. 📊 Показать задачи проекта")
+        print("5. 🔄 Изменить статус проекта")
+        print("6. 🚪 Выход")
+        print("="*60)
+        
+        choice = safe_input("\nВыберите действие (1-6): ")
+        
+        if choice == "1":
+            show_projects(projects)
+        
+        elif choice == "2":
+            projects = create_project(projects)
+        
+        elif choice == "3":
+            projects = add_task(projects)
+        
+        elif choice == "4":
+            show_tasks(projects)
+        
+        elif choice == "5":
+            projects = change_project_status(projects)
+        
+        elif choice == "6":
+            save_data(projects)
+            print("\n💾 Данные сохранены")
+            print("👋 До свидания!")
+            break
+        
+        else:
+            print("\n❌ Ошибка: выберите 1-6")
+        
+        try:
+            input("\nНажмите Enter для продолжения...")
+        except (EOFError, KeyboardInterrupt):
+            print("\n\n👋 Завершение программы")
+            break
+
+# === ЗАПУСК ===
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as e:
+        print(f"\n❌ Ошибка: {e}")
+        print("Попробуйте запустить программу снова")
