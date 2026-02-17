@@ -1,0 +1,38 @@
+import os
+
+file_path = 'todo_list.txt'
+
+# 1. СОЗДАНИЕ И ЗАПИСЬ
+with open(file_path, 'w', encoding='utf-8') as file:
+    file.write('=== МОЙ СПИСОК ДЕЛ ===\n')
+    file.write('1. Сделать зарядку\n')
+    file.write('2. Позавтракать\n')
+    file.write('3. Почитать книгу\n')
+
+if os.path.exists(file_path):
+    print("✅ Файл создан:", file_path)
+
+# 2. ДОБАВЛЕНИЕ
+with open(file_path, 'a', encoding='utf-8') as file:
+    file.write('4. Выучить Python\n')
+    file.write('5. Написать код\n')
+    file.write('6. Сделать перерыв\n')
+print("➕ Задачи добавлены")
+
+# 3. ЧТЕНИЕ
+print("\n📋 Содержимое файла:")
+with open(file_path, 'r', encoding='utf-8') as file:
+    # Читаем построчно через цикл
+    for line in file:
+        print(line.strip())
+
+# 4. ПОДСЧЁТ ЗАДАЧ
+with open(file_path, 'r', encoding='utf-8') as file:
+    lines = file.readlines()
+    task_count = len(lines) - 1  # минус заголовок
+    print(f"\n📊 Всего задач: {task_count}")
+
+# 5. ОТКРЫТИЕ В БЛОКНОТЕ (для Windows)
+os.system(f'notepad "{file_path}"')
+if __name__ == "__main__":
+    main()
