@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+</head>
+<body>
+    <!-- Меню навигации -->
+    <nav>
+        <a href="/">Главная</a> |
+        <a href="/about">Обо мне</a>
+    </nav>
+    
+    <h2>Вход в систему</h2>
+    
+    <!-- Форма для ввода логина и пароля -->
+    <form method="POST" action="/login">
+        <div>
+            <label for="username">Логин:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Войти</button>
+    </form>
+    
+    <!-- Сообщение об ошибке, если есть -->
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    
+    <!-- Подсказка для тестирования -->
+    <p><small>Тестовые данные: admin / 12345</small></p>
+</body>
+</html>
