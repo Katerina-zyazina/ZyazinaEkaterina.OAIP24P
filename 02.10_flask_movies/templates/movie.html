@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ movie.title if movie else "Не найдено" }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 30px auto; background: #f5f5f5; }
+        .movie-page { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        .info { color: #555; margin: 10px 0; }
+        .description { background: #f0f0f0; padding: 15px; border-left: 4px solid #0066cc; margin: 20px 0; }
+        .recommend {
+            background: #27ae60;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        a { color: #0066cc; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .error { color: #c0392b; }
+    </style>
+</head>
+<body>
+    <div class="movie-page">
+        {% if movie %}
+            <h1>{{ movie.title }}</h1>
+            <p class="info">📅 Год выпуска: {{ movie.year }}</p>
+            <p class="info">🎭 Жанр: {{ movie.genre }}</p>
+            <p class="info">⭐ Рейтинг: {{ movie.rating }}</p>
+
+            {# Условие Jinja2: если рейтинг >= 8.5 — показываем рекомендацию #}
+            {% if movie.rating >= 8.5 %}
+                <span class="recommend">🌟 Рекомендуем посмотреть</span>
+            {% endif %}
+
+            <div class="description">
+                <strong>Описание:</strong>
+                <p>{{ movie.description }}</p>
+            </div>
+
+            <a href="/">← Назад к списку</a>
+        {% else %}
+            <h1 class="error">❌ Фильм не найден</h1>
+            <p>К сожалению, фильма с таким номером не существует.</p>
+            <a href="/">← Вернуться на главную</a>
+        {% endif %}
+    </div>
+</body>
+</html>
