@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Избранное</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 30px auto; padding: 20px; }
+        .movie { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .movie h2 { margin: 0 0 5px 0; color: #333; }
+        .info { color: #666; margin: 5px 0; }
+        .rating { color: #e67e22; font-weight: bold; }
+        .btn { display: inline-block; padding: 8px 15px; background: #c0392b; color: white; text-decoration: none; border-radius: 5px; margin-top: 10px; }
+        .btn:hover { background: #a03020; }
+        .btn-clear { background: #e67e22; }
+        .btn-clear:hover { background: #d35400; }
+        .nav { margin-bottom: 20px; }
+        .nav a { margin-right: 15px; color: #0066cc; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h1>⭐ Избранные фильмы</h1>
+
+    <div class="nav">
+        <a href="/">← На главную</a>
+        <a href="/clear" class="btn btn-clear">🗑 Очистить избранное</a>
+    </div>
+
+    <hr>
+
+    {% if movies %}
+        {% for movie in movies %}
+            <div class="movie">
+                <h2>{{ movie.title }}</h2>
+                <p class="info">📅 Год: {{ movie.year }} | 🎭 Жанр: {{ movie.genre }}</p>
+                <p class="rating">⭐ Рейтинг: {{ movie.rating }}</p>
+                <a class="btn" href="/remove/{{ movie.id }}">Удалить из избранного</a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Вы пока ничего не добавили в избранное.</p>
+    {% endif %}
+</body>
+</html>

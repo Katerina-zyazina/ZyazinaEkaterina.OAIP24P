@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Каталог фильмов</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 30px auto; padding: 20px; }
+        .movie { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .movie h2 { margin: 0 0 5px 0; color: #333; }
+        .info { color: #666; margin: 5px 0; }
+        .rating { color: #e67e22; font-weight: bold; }
+        .btn { display: inline-block; padding: 8px 15px; background: #0066cc; color: white; text-decoration: none; border-radius: 5px; margin-top: 10px; }
+        .btn:hover { background: #0052a3; }
+        .already { color: #27ae60; font-weight: bold; }
+        .nav { margin-bottom: 20px; }
+        .nav a { margin-right: 15px; color: #0066cc; text-decoration: none; }
+        .nav a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>🎬 Каталог фильмов</h1>
+
+    <div class="nav">
+        <a href="/favorites">⭐ Избранное ({{ favorites_count }})</a>
+        <a href="/random">🎲 Случайный фильм</a>
+    </div>
+
+    <hr>
+
+    {% for movie in movies %}
+        <div class="movie">
+            <h2>{{ movie.title }}</h2>
+            <p class="info">📅 Год: {{ movie.year }} | 🎭 Жанр: {{ movie.genre }}</p>
+            <p class="rating">⭐ Рейтинг: {{ movie.rating }}</p>
+
+            {# Самостоятельная часть: проверка, есть ли фильм в избранном #}
+            {% if movie.id in favorites %}
+                <span class="already">✓ Уже в избранном</span>
+            {% else %}
+                <a class="btn" href="/add/{{ movie.id }}">Добавить в избранное</a>
+            {% endif %}
+        </div>
+    {% endfor %}
+</body>
+</html>
